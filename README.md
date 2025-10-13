@@ -1,0 +1,2 @@
+# Hackathon_Razum_2.0_Nam_Ne_DANO
+battle_ship_game
