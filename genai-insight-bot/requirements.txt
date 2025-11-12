@@ -1,4 +1,4 @@
-python-telegram-bot==20.7
+python-telegram-bot==20.4
 g4f==0.1.9
 psycopg2-binary==2.9.7
 supabase==1.0.3
