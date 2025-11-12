@@ -1,0 +1,4 @@
+name,position,company,projects,skills,publications,twitter,linkedin
+Ilya Sutskever,Chief Scientist,OpenAI,"GPT-4, DALL-E, ChatGPT","LLM, Deep Learning, NLP","The importance of compute in AI development, Scaling laws for neural language models",@ilyasut,https://linkedin.com/in/ilyasutskever
+Yann LeCun,Chief AI Scientist,Meta,"ConvNets, Self-supervised Learning, Llama","Computer Vision, Self-supervised Learning, AI Safety","A path towards autonomous AI, The limitations of large language models",@ylecun,https://linkedin.com/in/yann-lecun
+Sam Altman,CEO,OpenAI,"GPT series, OpenAI API, ChatGPT","AI Strategy, Product Management, Scaling","Planning for AGI and beyond, The AI revolution",@sama,https://linkedin.com/in/samaltman
