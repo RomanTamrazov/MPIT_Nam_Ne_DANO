@@ -13,8 +13,8 @@ def get_main_keyboard():
     keyboard = [
         ['🎯 Рекомендации', '🔍 Поиск'],
         ['⚖️ Сравнить', '📊 Статистика'],
-        ['📁 Загрузить данные', '🛠 Очистка'],
-        ['📈 Визуализации', 'ℹ️ Помощь']
+        ['📁 Загрузить данные', '📈 Визуализации'],
+        ['🛠 Очистка', 'ℹ️ Помощь']
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -42,7 +42,6 @@ def get_cleanup_keyboard():
 
 logger = logging.getLogger(__name__)
 
-# Состояния для ConversationHandler
 WAITING_TOPIC, WAITING_SEARCH, WAITING_COMPARE = range(3)
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -69,23 +68,29 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = """
 🤖 **GenAI Insight Bot - Помощь**
 
-👇 **Используйте кнопки или команды:**
-
-**🎯 Рекомендации** `/recommend [тема]`
+👇 **Основные команды:**
+**🎯 Рекомендации** `/recommend [тема]` - текстовые рекомендации
 **🔍 Поиск** `/search [запрос]` 
 **⚖️ Сравнить** `/compare [X] vs [Y]`
 **📊 Статистика** `/stats`
 
+👇 **Визуализации:**
+**📈 Визуализации** `/visualize` - меню выбора графиков
+  • 📊 **График рекомендаций** - по теме
+  • 🔗 **Граф связей** - связи между экспертами  
+  • 🎯 **Тепловая карта** - навыки экспертов
+  • 🏢 **Диаграмма компаний** - распределение по компаниям
+
+👇 **Управление данными:**
 **📁 Загрузить данные** `/upload`
 **🛠 Очистка** `/cleanup` `/clear`
-**📈 Визуализации** `/visualize`
+**📋 Список** `/list`
 
 **❌ Отмена** `/cancel` - вернуться в главное меню
 """
     await update.message.reply_text(
         help_text,
-        reply_markup=get_main_keyboard(),
-        parse_mode='Markdown'
+        reply_markup=get_main_keyboard()
     )
 
 async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -920,6 +925,7 @@ async def handle_search_query(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 async def compare_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обрабатывает команду сравнения двух экспертов"""
+    telegram_id = str(update.effective_user.id)
     if not context.args and update.message.text == '⚖️ Сравнить':
         await update.message.reply_text(
             "⚖️ **Введите имена экспертов для сравнения:**\n\nФормат: `Имя1 vs Имя2`\nПример: `Sam Altman vs Timnit Gebru`",
@@ -956,8 +962,8 @@ async def compare_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         logger.info(f"🔄 Сравниваю: {person_x} vs {person_y}")
 
-        expert_x = db.get_person_by_name(person_x)
-        expert_y = db.get_person_by_name(person_y)
+        expert_x = db.get_person_by_name(telegram_id, person_x)
+        expert_y = db.get_person_by_name(telegram_id, person_y)
 
         if not expert_x or not expert_y:
             await update.message.reply_text(
@@ -1237,6 +1243,291 @@ async def visualize_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "❌ Ошибка при создании визуализаций.",
             reply_markup=get_main_keyboard()
         )
+async def handle_visualization_choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Обрабатывает выбор типа визуализации"""
+    choice = update.message.text
+    telegram_id = str(update.effective_user.id)
+    
+    if choice == '📊 График рекомендаций':
+        await update.message.reply_text(
+            "📊 **График рекомендаций**\n\nВведите тему для анализа:",
+            reply_markup=get_cancel_keyboard()
+        )
+        context.user_data['visualization_type'] = 'recommendations_chart'
+        return WAITING_TOPIC
+        
+    elif choice == '🔗 Граф связей':
+        await create_network_graph(update, context, telegram_id)
+        
+    elif choice == '🎯 Тепловая карта':
+        await create_skills_heatmap(update, context, telegram_id)
+        
+    elif choice == '🏢 Диаграмма компаний':
+        await create_company_chart(update, context, telegram_id)
+        
+    elif choice == '❌ Отмена':
+        return await cancel_command(update, context)
+    
+    return ConversationHandler.END
+
+async def create_network_graph(update: Update, context: ContextTypes.DEFAULT_TYPE, telegram_id: str):
+    """Создает только граф связей"""
+    try:
+        await update.message.chat.send_action(action="typing")
+        
+        people = db.get_all_people(telegram_id)
+        
+        if not people:
+            await update.message.reply_text(
+                "❌ База данных пуста. Сначала загрузите данные через /upload",
+                reply_markup=get_main_keyboard()
+            )
+            return
+        
+        # Подготавливаем данные для графа
+        people_data = []
+        for person in people[:15]:  # Ограничиваем для читаемости
+            people_data.append({
+                'name': person.name,
+                'company': person.company or 'Не указана',
+                'skills': person.skills,
+                'position': person.position or 'Не указана'
+            })
+        
+        # Создаем связи
+        connections = []
+        for i in range(len(people_data)):
+            for j in range(i + 1, len(people_data)):
+                common_skills = set(people_data[i]['skills']) & set(people_data[j]['skills'])
+                if common_skills:
+                    connections.append((i, j))
+                elif (people_data[i]['company'] == people_data[j]['company'] and 
+                      people_data[i]['company'] != 'Не указана'):
+                    connections.append((i, j))
+        
+        # Создаем граф
+        graph_html = visualizer.create_network_graph(people_data, connections)
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
+            f.write(graph_html)
+            temp_file = f.name
+
+        await update.message.reply_document(
+            document=open(temp_file, 'rb'),
+            filename="expert_network_graph.html",
+            caption="🔗 Граф связей экспертов\n\nСвязи основаны на общих навыках и компаниях"
+        )
+        os.unlink(temp_file)
+        
+        await update.message.reply_text(
+            "✅ Граф связей создан!",
+            reply_markup=get_main_keyboard()
+        )
+        
+    except Exception as e:
+        logger.error(f"Error creating network graph: {e}")
+        await update.message.reply_text(
+            "❌ Ошибка при создании графа связей",
+            reply_markup=get_main_keyboard()
+        )
+
+async def create_skills_heatmap(update: Update, context: ContextTypes.DEFAULT_TYPE, telegram_id: str):
+    """Создает только тепловую карту навыков"""
+    try:
+        await update.message.chat.send_action(action="typing")
+        
+        people = db.get_all_people(telegram_id)
+        
+        if not people:
+            await update.message.reply_text(
+                "❌ База данных пуста. Сначала загрузите данные через /upload",
+                reply_markup=get_main_keyboard()
+            )
+            return
+        
+        # Подготавливаем данные для тепловой карты
+        skills_data = []
+        for person in people[:20]:  # Ограничиваем для читаемости
+            if person.skills:
+                skills_data.append({
+                    'name': person.name,
+                    'skills': person.skills,
+                    'company': person.company or 'Не указана'
+                })
+        
+        if not skills_data:
+            await update.message.reply_text(
+                "❌ В базе нет данных о навыках экспертов",
+                reply_markup=get_main_keyboard()
+            )
+            return
+        
+        heatmap_html = visualizer.create_skills_heatmap(skills_data)
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
+            f.write(heatmap_html)
+            temp_file = f.name
+
+        await update.message.reply_document(
+            document=open(temp_file, 'rb'),
+            filename="skills_heatmap.html",
+            caption="🎯 Тепловая карта навыков экспертов\n\nПоказывает распределение навыков среди экспертов"
+        )
+        os.unlink(temp_file)
+        
+        await update.message.reply_text(
+            "✅ Тепловая карта создана!",
+            reply_markup=get_main_keyboard()
+        )
+        
+    except Exception as e:
+        logger.error(f"Error creating skills heatmap: {e}")
+        await update.message.reply_text(
+            "❌ Ошибка при создании тепловой карты",
+            reply_markup=get_main_keyboard()
+        )
+
+async def create_company_chart(update: Update, context: ContextTypes.DEFAULT_TYPE, telegram_id: str):
+    """Создает только диаграмму компаний"""
+    try:
+        await update.message.chat.send_action(action="typing")
+        
+        people = db.get_all_people(telegram_id)
+        
+        if not people:
+            await update.message.reply_text(
+                "❌ База данных пуста. Сначала загрузите данные через /upload",
+                reply_markup=get_main_keyboard()
+            )
+            return
+        
+        # Подготавливаем данные для диаграммы компаний
+        company_data = []
+        for person in people:
+            company_data.append({
+                'name': person.name,
+                'company': person.company or 'Не указана',
+                'position': person.position or 'Не указана'
+            })
+        
+        company_html = visualizer.create_company_distribution(company_data)
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
+            f.write(company_html)
+            temp_file = f.name
+
+        await update.message.reply_document(
+            document=open(temp_file, 'rb'),
+            filename="company_distribution.html",
+            caption="🏢 Распределение экспертов по компаниям\n\nПоказывает в каких компаниях работают эксперты"
+        )
+        os.unlink(temp_file)
+        
+        await update.message.reply_text(
+            "✅ Диаграмма компаний создана!",
+            reply_markup=get_main_keyboard()
+        )
+        
+    except Exception as e:
+        logger.error(f"Error creating company chart: {e}")
+        await update.message.reply_text(
+            "❌ Ошибка при создании диаграммы компаний",
+            reply_markup=get_main_keyboard()
+        )
+
+async def handle_recommendations_chart(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Создает график рекомендаций по теме"""
+    topic = update.message.text
+    telegram_id = str(update.effective_user.id)
+    
+    try:
+        await update.message.chat.send_action(action="typing")
+        
+        # Используем логику поиска из recommend_command
+        people = db.get_all_people(telegram_id)
+        
+        if not people:
+            await update.message.reply_text(
+                "❌ База данных пуста.",
+                reply_markup=get_main_keyboard()
+            )
+            return ConversationHandler.END
+        
+        # Поиск экспертов по теме (упрощенная версия)
+        matched_experts = []
+        seen_names = set()
+        
+        for person in people:
+            if person.name in seen_names:
+                continue
+                
+            score = 0
+            
+            # Простая логика подсчета очков
+            if topic.lower() in person.name.lower():
+                score += 3
+            if person.position and topic.lower() in person.position.lower():
+                score += 2
+            if person.company and topic.lower() in person.company.lower():
+                score += 2
+            for skill in person.skills:
+                if topic.lower() in skill.lower():
+                    score += 1
+            
+            if score > 0:
+                matched_experts.append({
+                    'person': person,
+                    'score': score
+                })
+                seen_names.add(person.name)
+        
+        matched_experts.sort(key=lambda x: x['score'], reverse=True)
+        
+        if not matched_experts:
+            await update.message.reply_text(
+                f"❌ По теме '{topic}' экспертов не найдено",
+                reply_markup=get_main_keyboard()
+            )
+            return ConversationHandler.END
+        
+        # Создаем данные для графика
+        recommendations_data = []
+        for expert in matched_experts[:10]:
+            recommendations_data.append({
+                'name': expert['person'].name,
+                'position': expert['person'].position or 'Не указана',
+                'company': expert['person'].company or 'Не указана',
+                'skills': expert['person'].skills,
+                'score': expert['score']
+            })
+        
+        # Создаем график
+        chart_html = visualizer.create_recommendations_chart(recommendations_data)
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
+            f.write(chart_html)
+            temp_file = f.name
+
+        await update.message.reply_document(
+            document=open(temp_file, 'rb'),
+            filename=f"recommendations_{topic}.html",
+            caption=f"📊 Рекомендации по теме: {topic}\n\nГрафик показывает релевантность экспертов"
+        )
+        os.unlink(temp_file)
+        
+        await update.message.reply_text(
+            f"✅ График рекомендаций по теме '{topic}' создан!",
+            reply_markup=get_main_keyboard()
+        )
+        
+    except Exception as e:
+        logger.error(f"Error creating recommendations chart: {e}")
+        await update.message.reply_text(
+            "❌ Ошибка при создании графика",
+            reply_markup=get_main_keyboard()
+        )
+    
+    return ConversationHandler.END
 
 async def cleanup_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Очищает дубликаты в базе данных"""
@@ -1278,8 +1569,9 @@ async def cleanup_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Очищает всю базу данных"""
+    telegram_id = str(update.effective_user.id)
     try:
-        stats_before = db.get_database_stats()
+        stats_before = db.get_database_stats(telegram_id=telegram_id)
         people_count = stats_before.get('people_count', 0)
         
         if people_count == 0:
@@ -1319,6 +1611,7 @@ async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def confirm_clear(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обрабатывает подтверждение очистки базы"""
     user_choice = update.message.text
+    telegram_id = str(update.effective_user.id)
     
     if user_choice == '✅ Да, очистить базу':
         try:
@@ -1330,7 +1623,7 @@ async def confirm_clear(update: Update, context: ContextTypes.DEFAULT_TYPE):
             stats_before = context.user_data.get('clear_stats', {})
             people_count = stats_before.get('people_count', 0)
             
-            success = db.clear_database()
+            success = db.clear_database(telegram_id)
             
             if success:
                 await update.message.reply_text(
@@ -1681,6 +1974,23 @@ def setup_handlers(application):
         fallbacks=[CommandHandler('cancel', cancel_command)]
     )
     application.add_handler(compare_conv_handler)
+
+    chart_conv_handler = ConversationHandler(
+        entry_points=[
+            MessageHandler(filters.Regex('^📊 График рекомендаций$'), visualize_command)
+        ],
+        states={
+            WAITING_TOPIC: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_recommendations_chart)]
+        },
+        fallbacks=[CommandHandler('cancel', cancel_command)]
+    )
+    application.add_handler(chart_conv_handler)
+    
+    # Обработчик выбора визуализации
+    application.add_handler(MessageHandler(
+        filters.Regex('^(🔗 Граф связей|🎯 Тепловая карта|🏢 Диаграмма компаний|❌ Отмена)$'),
+        handle_visualization_choice
+    ))
     
     # ConversationHandler для очистки
     clear_conv_handler = ConversationHandler(
