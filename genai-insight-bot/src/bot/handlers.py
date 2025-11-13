@@ -1086,8 +1086,8 @@ async def handle_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # Проверяем размер файла
-    if document.file_size > 10 * 1024**3:
-        await update.message.reply_text("❌ Файл слишком большой. Максимум 10MB.")
+    if document.file_size > 1024**3:
+        await update.message.reply_text("❌ Файл слишком большой. Максимум 1GB.")
         return
 
     # Проверяем тип файла
