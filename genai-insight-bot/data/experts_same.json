@@ -1,0 +1,192 @@
+[
+    {
+        "name":"Ilya Sutskever",
+        "position":"Chief Scientist",
+        "company":"OpenAI",
+        "projects":"GPT-4, DALL-E, ChatGPT",
+        "skills":"LLM, Deep Learning, NLP",
+        "publications":"The importance of compute in AI development, Scaling laws for neural language models",
+        "twitter":"@ilyasut",
+        "linkedin":"https:\/\/linkedin.com\/in\/ilyasutskever"
+    },
+    {
+        "name":"Yann LeCun",
+        "position":"Chief AI Scientist",
+        "company":"Meta",
+        "projects":"ConvNets, Self-supervised Learning, Llama",
+        "skills":"Computer Vision, Self-supervised Learning, AI Safety",
+        "publications":"A path towards autonomous AI, The limitations of large language models",
+        "twitter":"@ylecun",
+        "linkedin":"https:\/\/linkedin.com\/in\/yann-lecun"
+    },
+    {
+        "name":"Sam Altman",
+        "position":"CEO",
+        "company":"OpenAI",
+        "projects":"GPT series, OpenAI API, ChatGPT",
+        "skills":"AI Strategy, Product Management, Scaling",
+        "publications":"Planning for AGI and beyond, The AI revolution",
+        "twitter":"@sama",
+        "linkedin":"https:\/\/linkedin.com\/in\/samaltman"
+    },
+    {
+        "name":"Demis Hassabis",
+        "position":"CEO",
+        "company":"DeepMind",
+        "projects":"AlphaGo, AlphaFold, Gemini",
+        "skills":"Reinforcement Learning, Neuroscience, AI Ethics",
+        "publications":"Learning from human feedback, Towards general AI systems",
+        "twitter":"@demishassabis",
+        "linkedin":"https:\/\/linkedin.com\/in\/demis-hassabis"
+    },
+    {
+        "name":"Andrej Karpathy",
+        "position":"Researcher",
+        "company":"OpenAI",
+        "projects":"Tesla Autopilot, GPT-3, Neural Nets",
+        "skills":"Computer Vision, Deep Learning, PyTorch",
+        "publications":"Software 2.0, The unreasonable effectiveness of data",
+        "twitter":"@karpathy",
+        "linkedin":"https:\/\/linkedin.com\/in\/andrej-karpathy"
+    },
+    {
+        "name":"Fei-Fei Li",
+        "position":"Professor",
+        "company":"Stanford University",
+        "projects":"ImageNet, AI4ALL",
+        "skills":"Computer Vision, AI Policy, Education",
+        "publications":"ImageNet: A large-scale hierarchical image database, Human-centered AI",
+        "twitter":"@drfeifei",
+        "linkedin":"https:\/\/linkedin.com\/in\/feifeili"
+    },
+    {
+        "name":"Jeff Dean",
+        "position":"Senior Fellow",
+        "company":"Google DeepMind",
+        "projects":"TPU, Transformer, Gemini",
+        "skills":"Distributed Systems, Large Models, AI Infrastructure",
+        "publications":"Building scalable AI systems, Responsible AI research",
+        "twitter":"@jeffdean",
+        "linkedin":"https:\/\/linkedin.com\/in\/jeff-dean"
+    },
+    {
+        "name":"Dario Amodei",
+        "position":"CEO",
+        "company":"Anthropic",
+        "projects":"Claude, Constitutional AI",
+        "skills":"AI Alignment, Safety, Large Language Models",
+        "publications":"Interpretability in LLMs, Constitutional training for safer models",
+        "twitter":"@darioamodei",
+        "linkedin":"https:\/\/linkedin.com\/in\/darioamodei"
+    },
+    {
+        "name":"Mira Murati",
+        "position":"CTO",
+        "company":"OpenAI",
+        "projects":"ChatGPT, DALL-E 3",
+        "skills":"Product Strategy, AI Engineering, Leadership",
+        "publications":"On integrating AI safely into society, Multimodal reasoning systems",
+        "twitter":"@miramurati",
+        "linkedin":"https:\/\/linkedin.com\/in\/mira-murati"
+    },
+    {
+        "name":"Yoshua Bengio",
+        "position":"Professor",
+        "company":"University of Montreal",
+        "projects":"Deep Learning, CIFAR Program",
+        "skills":"Representation Learning, AI Ethics, Optimization",
+        "publications":"Consciousness in AI, The moral dimension of artificial intelligence",
+        "twitter":"@yoshuabengio",
+        "linkedin":"https:\/\/linkedin.com\/in\/yoshua-bengio"
+    },
+    {
+        "name":"Sergey Levine",
+        "position":"Professor",
+        "company":"UC Berkeley",
+        "projects":"Decision Transformer, Robotics Learning",
+        "skills":"Reinforcement Learning, Robotics, Control",
+        "publications":"Offline RL: Bridging learning and planning, Autonomous decision making",
+        "twitter":"@svlevine",
+        "linkedin":"https:\/\/linkedin.com\/in\/sergey-levine"
+    },
+    {
+        "name":"Sara Hooker",
+        "position":"Director",
+        "company":"Cohere For AI",
+        "projects":"Open Collaboration, Model Evaluation",
+        "skills":"Model Transparency, Community Research, NLP",
+        "publications":"The hidden cost of AI, Evaluating open-weight models",
+        "twitter":"@sarahooker",
+        "linkedin":"https:\/\/linkedin.com\/in\/sarahooker"
+    },
+    {
+        "name":"Pieter Abbeel",
+        "position":"Professor",
+        "company":"UC Berkeley",
+        "projects":"Robotics, AI Startups",
+        "skills":"Reinforcement Learning, Autonomous Systems, Entrepreneurship",
+        "publications":"How robots learn, Deep reinforcement learning for control",
+        "twitter":"@pabbeel",
+        "linkedin":"https:\/\/linkedin.com\/in\/pieterabbeel"
+    },
+    {
+        "name":"Timnit Gebru",
+        "position":"Founder",
+        "company":"DAIR Institute",
+        "projects":"Data Ethics, Bias in AI",
+        "skills":"AI Fairness, Computer Vision, Responsible ML",
+        "publications":"Datasheets for datasets, The need for diverse AI research",
+        "twitter":"@timnitGebru",
+        "linkedin":"https:\/\/linkedin.com\/in\/timnit-gebru"
+    },
+    {
+        "name":"Lex Fridman",
+        "position":"Research Scientist",
+        "company":"MIT",
+        "projects":"Self-driving Cars, Deep Learning",
+        "skills":"Machine Learning, Autonomous Systems, Human-AI Interaction",
+        "publications":"The role of empathy in AI, Future of human-machine collaboration",
+        "twitter":"@lexfridman",
+        "linkedin":"https:\/\/linkedin.com\/in\/lexfridman"
+    },
+    {
+        "name":"Emad Mostaque",
+        "position":"CEO",
+        "company":"Stability AI",
+        "projects":"Stable Diffusion, DreamStudio",
+        "skills":"Generative Models, AI Economics, Open Source",
+        "publications":"Scaling open-source AI, Democratizing generative models",
+        "twitter":"@EMostaque",
+        "linkedin":"https:\/\/linkedin.com\/in\/emad-mostaque"
+    },
+    {
+        "name":"Sebastian Ruder",
+        "position":"Research Scientist",
+        "company":"Google DeepMind",
+        "projects":"Cross-lingual NLP, Transfer Learning",
+        "skills":"Natural Language Processing, Multilingual Models, Representation Learning",
+        "publications":"Universal language modeling, Transfer learning in NLP",
+        "twitter":"@seb_ruder",
+        "linkedin":"https:\/\/linkedin.com\/in\/sebastian-ruder"
+    },
+    {
+        "name":"Soumith Chintala",
+        "position":"Engineer",
+        "company":"Meta AI",
+        "projects":"PyTorch, TorchVision",
+        "skills":"Deep Learning Frameworks, Open Source, Model Training",
+        "publications":"Building robust ML tools, Future of open AI research",
+        "twitter":"@soumithchintala",
+        "linkedin":"https:\/\/linkedin.com\/in\/soumith-chintala"
+    },
+    {
+        "name":"Roman Tamrazov",
+        "position":"ML Researcher",
+        "company":"Nam Ne DANO",
+        "projects":"MPIT_Nam_Ne_DANO, AI Museum Recommender",
+        "skills":"Computer Vision, Multimodal AI, Machine Learning",
+        "publications":"Integrating vision-language models in education, Practical AI projects for students",
+        "twitter":"@Roman_Tamrazov",
+        "linkedin":"https:\/\/linkedin.com\/in\/romantamrazov"
+    }
+]
