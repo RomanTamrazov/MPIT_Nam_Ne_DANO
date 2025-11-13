@@ -84,4 +84,9 @@ cd MPIT_Nam_Ne_DANO
 cd genai-insight-bot
 pip install -r requirements.txt
 python src/migration.py
+Создайте файл .env:
+BOT_TOKEN=8204065530:AAGn5jcVJClc1-YDuVza77Xe_GorZL-66HM
+DATABASE_URL=sqlite:///genai_experts.db
 python src/main.py
+И наслаждайтесь ._.
+@GenAI_insight_bot
