@@ -81,6 +81,7 @@ Telegram bot для аналитики и анализа экспертов в �
 ```bash
 git clone https://github.com/RomanTamrazov/MPIT_Nam_Ne_DANO.git
 cd MPIT_Nam_Ne_DANO
+cd genai-insight-bot
 pip install -r requirements.txt
 python src/migration.py
 python src/main.py
